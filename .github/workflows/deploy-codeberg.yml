@@ -15,11 +15,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup SSH
+    - name: Set up SSH agent
+      run: |
+        eval "$(ssh-agent -s)"
+        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+    - name: Add Codeberg SSH key to known hosts
       run: |
         mkdir -p ~/.ssh
-        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | ssh-add -
         ssh-keyscan -t rsa codeberg.org >> ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
 
     - name: Clone Codeberg repository
       run: |
