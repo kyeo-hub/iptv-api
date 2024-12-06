@@ -1,9 +1,11 @@
-name: Deploy Specific File to Codeberg
+name: Deploy M3U File to Codeberg
 
 on:
   push:
     paths:
       - output/result.m3u  # 替换为你要监控的文件路径
+  workflow_dispatch:  # 手动触发选项
+
 
 jobs:
   deploy:
