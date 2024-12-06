@@ -1,0 +1,38 @@
+name: Deploy Specific File to Codeberg
+
+on:
+  push:
+    paths:
+      - output/result.m3u  # 替换为你要监控的文件路径
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        ssh-keyscan -t rsa codeberg.org >> ~/.ssh/known_hosts
+
+    - name: Clone Codeberg repository
+      run: |
+        git clone git@codeberg.org:kyeo/iptv-m3u.git codeberg-repo
+        cd codeberg-repo
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+
+    - name: Copy specific file
+      run: |
+        cp output/result.m3u codeberg-repo/
+
+    - name: Commit and push to Codeberg
+      run: |
+        cd codeberg-repo
+        git add result.m3u
+        git commit -m "Update result.m3u from GitHub Actions"
+        git push origin main
