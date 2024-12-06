@@ -18,10 +18,11 @@ jobs:
     - name: Set up SSH agent
       run: |
         eval "$(ssh-agent -s)"
-        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        mkdir -p ~/.ssh  # 确保 .ssh 目录存在
+        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | tee ~/.ssh/id_rsa > /dev/null
         chmod 600 ~/.ssh/id_rsa
-        cat ~/.ssh/id_rsa
-        ssh-add ~/.ssh/id_rsa 
+        cat ~/.ssh/id_rsa  # 调试信息：打印密钥内容
+        ssh-add ~/.ssh/id_rsa
 
     - name: Add Codeberg SSH key to known hosts
       run: |
