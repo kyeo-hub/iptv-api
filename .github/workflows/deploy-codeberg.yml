@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout code
@@ -18,7 +18,10 @@ jobs:
     - name: Set up SSH agent
       run: |
         eval "$(ssh-agent -s)"
-        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        cat ~/.ssh/id_rsa
+        ssh-add ~/.ssh/id_rsa 
 
     - name: Add Codeberg SSH key to known hosts
       run: |
