@@ -2,8 +2,8 @@ name: Deploy M3U File to Codeberg
 
 on:
   push:
-    paths:
-      - output/result.m3u  # 替换为你要监控的文件路径
+    branches:
+      - master  # 只监听master分支上的提交
   workflow_dispatch:  # 手动触发选项
 
 
@@ -41,8 +41,13 @@ jobs:
 
     - name: Copy specific file
       run: |
-        cp output/result.m3u codeberg-repo/
-
+        if [ -f "output/result.m3u" ]; then
+          cp output/result.m3u codeberg-repo/
+        else
+          echo "File output/result.m3u does not exist."
+          exit 1
+        fi
+        
     - name: Commit and push to Codeberg
       run: |
         cd codeberg-repo
