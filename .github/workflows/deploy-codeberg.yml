@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master  # 只监听master分支上的提交
+  schedule:
+    # 定时任务，在每天的5点执行任务
+  	- cron: '0 24 * * *'
   workflow_dispatch:  # 手动触发选项
 
 
@@ -54,3 +57,14 @@ jobs:
         git add result.m3u
         git commit -m "Update result.m3u from GitHub Actions"
         git push origin main
+        
+    - name: Send Notification to Gotify
+      if: always() # 确保无论作业成功还是失败都会执行此步骤
+      run: |
+        curl -X POST "$GOTIFY_SERVER/message?token=$GOTIFY_TOKEN" \
+             -F "title=GitHub Action: ${{ github.workflow }}" \
+             -F "priority=5" \
+             -F "message=推送M3U到codeberg.org: ${{ job.status }}"
+      env:
+        GOTIFY_SERVER: ${{ secrets.GOTIFY_SERVER }}
+        GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
