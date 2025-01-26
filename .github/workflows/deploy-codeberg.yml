@@ -6,7 +6,7 @@ on:
       - master  # 只监听master分支上的提交
   schedule:
     # 定时任务，在每天的5点执行任务
-  	- cron: '0 24 * * *'
+  	- cron: '30 21 * * *'
   workflow_dispatch:  # 手动触发选项
 
 
