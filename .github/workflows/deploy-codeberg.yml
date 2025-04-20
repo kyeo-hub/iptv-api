@@ -1,4 +1,4 @@
-name: Deploy M3U File to Codeberg
+name: Deploy M3U File to GIT_KYEO_TOP
 
 on:
   push:
