@@ -17,26 +17,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up SSH agent
-      env:
-        GIT_PRIVATE_KEY: ${{ secrets.GIT_PRIVATE_KEY }}
-      run: |
-        eval "$(ssh-agent -s)"
-        mkdir -p ~/.ssh  # 确保 .ssh 目录存在
-        echo "$GIT_PRIVATE_KEY" | tr -d '\r' | tee ~/.ssh/id_rsa > /dev/null
-        chmod 600 ~/.ssh/id_rsa
-        cat ~/.ssh/id_rsa  # 调试信息：打印密钥内容
-        ssh-add ~/.ssh/id_rsa
-
-    - name: Add Codeberg SSH key to known hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -t rsa git.kyeo.top >> ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/known_hosts
-
     - name: Clone iptv box repository
       run: |
-        git clone git@git.kyeo.top:2222/kyeo/box.git box
+        git clone https://${{ secrets.GIT_PRIVATE_KEY }}@git.kyeo.top/kyeo/box.git box
         cd box
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
