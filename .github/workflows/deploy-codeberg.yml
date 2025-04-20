@@ -19,11 +19,11 @@ jobs:
 
     - name: Set up SSH agent
       env:
-        CODEBERG_PRIVATE_KEY: ${{ secrets.CODEBERG_PRIVATE_KEY }}
+        GIT_PRIVATE_KEY: ${{ secrets.GIT_PRIVATE_KEY }}
       run: |
         eval "$(ssh-agent -s)"
         mkdir -p ~/.ssh  # 确保 .ssh 目录存在
-        echo "$CODEBERG_PRIVATE_KEY" | tr -d '\r' | tee ~/.ssh/id_rsa > /dev/null
+        echo "$GIT_PRIVATE_KEY" | tr -d '\r' | tee ~/.ssh/id_rsa > /dev/null
         chmod 600 ~/.ssh/id_rsa
         cat ~/.ssh/id_rsa  # 调试信息：打印密钥内容
         ssh-add ~/.ssh/id_rsa
@@ -31,30 +31,30 @@ jobs:
     - name: Add Codeberg SSH key to known hosts
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan -t rsa codeberg.org >> ~/.ssh/known_hosts
+        ssh-keyscan -t rsa git.kyeo.top >> ~/.ssh/known_hosts
         chmod 600 ~/.ssh/known_hosts
 
-    - name: Clone Codeberg repository
+    - name: Clone iptv box repository
       run: |
-        git clone git@codeberg.org:kyeo/iptv-m3u.git codeberg-repo
-        cd codeberg-repo
+        git clone git@git.kyeo.top:2222/kyeo/box.git box
+        cd box
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
 
     - name: Copy specific file
       run: |
         if [ -f "output/result.m3u" ]; then
-          cp output/result.m3u codeberg-repo/
+          cp output/result.m3u box/iptv.m3u
         else
           echo "File output/result.m3u does not exist."
           exit 1
         fi
         
-    - name: Commit and push to Codeberg
+    - name: Commit and push to git.kyeo.top
       run: |
-        cd codeberg-repo
-        git add result.m3u
-        git commit -m "Update result.m3u from GitHub Actions"
+        cd box
+        git add iptv.m3u
+        git commit -m "Update iptv.m3u from GitHub Actions"
         git push origin main
         
     - name: Send Notification to Gotify
@@ -63,7 +63,7 @@ jobs:
         curl -X POST "$GOTIFY_SERVER/message?token=$GOTIFY_TOKEN" \
              -F "title=GitHub Action: ${{ github.workflow }}" \
              -F "priority=5" \
-             -F "message=推送M3U到codeberg.org: ${{ job.status }}"
+             -F "message=推送M3U到git.kyeo.top: ${{ job.status }}"
       env:
         GOTIFY_SERVER: ${{ secrets.GOTIFY_SERVER }}
         GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
