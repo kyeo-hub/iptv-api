@@ -1,11 +1,6 @@
 name: Deploy M3U File to GIT_KYEO_TOP
 
 on:
-  push:
-    branches:
-      - master  # 只监听master分支上的提交
-  schedule:
-    - cron: '30 21 * * *'
   workflow_dispatch:  # 手动触发选项
 
 
