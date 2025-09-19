@@ -21,7 +21,7 @@ jobs:
     - name: Copy specific file
       run: |
         if [ -f "output/result.m3u" ]; then
-          cp output/result.m3u box/iptv.m3u
+          cp output/result.m3u box/iptv/iptv-api.m3u
         else
           echo "File output/result.m3u does not exist."
           exit 1
