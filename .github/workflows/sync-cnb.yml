@@ -13,7 +13,7 @@ jobs:
 
     - name: Clone repository from cnb.cool
       run: |
-        git clone https://${{ secrets.CNB_COOL_TOKEN }}@cnb.cool/kyeo.top/personal_config.git box
+        git clone https://cnb:${{ secrets.CNB_COOL_TOKEN }}@cnb.cool/kyeo.top/personal_config.git box
         cd box
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
