@@ -24,7 +24,6 @@ jobs:
 
     - name: Copy specific file
       run: |
-        - name: Copy specific file
         if [ -f "output/result.m3u" ]; then
           mkdir -p box/iptv
           cp output/result.m3u box/iptv/iptv-api.m3u
