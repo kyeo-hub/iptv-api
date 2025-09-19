@@ -36,7 +36,7 @@ jobs:
     - name: Commit and push to cnb.cool
       run: |
         cd box
-        git add iptv.m3u
+        git add iptv/iptv-api.m3u
         git commit -m "Update iptv.m3u from GitHub Actions"
         git push origin main
 
