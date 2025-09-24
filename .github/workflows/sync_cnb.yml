@@ -1,0 +1,51 @@
+name: Deploy M3U File to CNB.COOl
+
+on:
+  schedule:
+    - cron: '0 23 * * *'
+    - cron: '0 11 * * *'
+    
+  workflow_dispatch:  # 手动触发选项
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Clone repository from cnb.cool
+      run: |
+        git clone https://cnb:${{ secrets.CNB_COOL_TOKEN }}@cnb.cool/kyeo.top/personal_config.git box
+        cd box
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+    - name: Copy specific file
+      run: |
+        if [ -f "output/result.m3u" ]; then
+          mkdir -p box/iptv
+          cp output/result.m3u box/iptv/iptv-api.m3u
+          echo "✅ File copied successfully."
+        else
+          echo "❌ File output/result.m3u not found."
+          exit 1
+        fi
+    - name: Commit and push to cnb.cool
+      run: |
+        cd box
+        git add iptv/iptv-api.m3u
+        git commit -m "Update iptv.m3u from GitHub Actions"
+        git push origin main
+        
+    - name: Send Telegram Message
+      uses: appleboy/telegram-action@master
+      with:
+        token: ${{ secrets.TG_BOT_TOKEN }}
+        to: ${{ secrets.TG_USER_ID }}
+        message: |
+          New commit by ${{ github.actor }}!
+          Commit message: ${{ github.event.head_commit.message }}
+          Repository: ${{ github.repository }}
+          View changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+            
